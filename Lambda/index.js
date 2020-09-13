@@ -7,24 +7,25 @@ exports.handler = async (event) => {
     let index = event.index;
     let body = event.body;
     
+    let user = (await awsAPI.getDBItemData('HealtheRemind', 'id', id)).Item;
+    
+    if(!user){
+        await awsAPI.setDBItemUpdate(
+            'HealtheRemind',
+            'id',
+            id,
+            {
+                prescriptions: [],
+                appointments: []
+            }
+        );
+    }
+    
     switch(method){
         case 'GET': {
             let data = (await awsAPI.getDBItemData('HealtheRemind', 'id', id)).Item;
             
             return data;
-        }
-        case 'POST': {
-            await awsAPI.setDBItemUpdate(
-                'HealtheRemind',
-                'id',
-                id,
-                {
-                    prescriptions: [],
-                    appointments: []
-                }
-            );
-            
-            return {};
         }
         case 'PUT': {
             if(type == 'prescription'){
